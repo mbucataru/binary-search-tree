@@ -1,6 +1,7 @@
 require_relative 'node'
 class Tree
   attr_reader :root
+
   def initialize(array)
     @root = build_tree(array)
   end
@@ -40,6 +41,21 @@ class Tree
         current_root = current_root.left_child
       end
     end
+  end
+
+  def find(value)
+    current_node = root
+    loop do
+      return current_node if current_node.value == value
+      return nil if current_node.nil?
+
+      current_node = if value > current_node.value
+                       current_node.right_child
+                     else
+                       current_node.left_child
+                     end
+    end
+    current_node
   end
 end
 
