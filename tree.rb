@@ -121,6 +121,32 @@ class Tree
     block.call(node)
   end
 
+  def height(node)
+    return -1 if node.nil?
+    return 0 if node.left_child.nil? && node.right_child.nil?
+
+    left_height = height(node.left_child)
+    right_height = height(node.right_child)
+
+    left_height > right_height ? left_height + 1 : right_height + 1
+  end
+
+  def depth(target_node)
+    current_node = root
+    depth = 0
+    loop do
+      return nil if current_node.nil?
+      return depth if current_node == target_node
+
+      current_node = if target_node.value > current_node.value
+                       current_node.right_child
+                     else
+                       current_node.left_child
+                     end
+      depth += 1
+    end
+  end
+
   private
 
   def delete_node(current_node, parent_node)
@@ -183,6 +209,13 @@ class Tree
     end
     return_array
   end
+
+  def calculate_height(node)
+
+  end
 end
 
 tree = Tree.new([20, 30, 50, 40, 32, 34, 36, 70, 60, 65, 80, 75, 85])
+tree.pretty_print
+node = tree.find(30)
+puts tree.height(node)
