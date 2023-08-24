@@ -147,6 +147,17 @@ class Tree
     end
   end
 
+  def balanced?(node = root)
+    return true if node.nil?
+
+    left_height = height(node.left_child)
+    right_height = height(node.right_child)
+
+    return false if (left_height - right_height).abs > 1
+
+    balanced?(node.left_child) && balanced?(node.right_child)
+  end
+
   private
 
   def delete_node(current_node, parent_node)
@@ -209,13 +220,8 @@ class Tree
     end
     return_array
   end
-
-  def calculate_height(node)
-
-  end
 end
 
 tree = Tree.new([20, 30, 50, 40, 32, 34, 36, 70, 60, 65, 80, 75, 85])
 tree.pretty_print
-node = tree.find(30)
-puts tree.height(node)
+puts tree.balanced?
