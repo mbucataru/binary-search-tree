@@ -53,26 +53,28 @@ class Tree
   #   Copy the value of the order successor to the deletion node
   #   Set the old child to null and blank out its parent's child
   def delete(deletion_value, current_node = @root, parent_node = nil)
-    return current_node if current_node.nil?
+    return if current_node.nil?
 
     # Recursive calls to go deeper in the tree
     if current_node.value > deletion_value
-      current_node.left_child = delete(deletion_value, current_node.left_child, current_node)
-      return current_node
+      delete(deletion_value, current_node.left_child, current_node)
+      return
     elsif current_node.value < deletion_value
-      current_node.right_child = delete(deletion_value, current_node.right_child, current_node)
-      return current_node
+      delete(deletion_value, current_node.right_child, current_node)
+      return
     end
 
+    # This line is reached when we hit the node we want to delete
     delete_node(current_node, parent_node)
-    # We exit the if else statement when we hit the value
   end
 
   def delete_node(current_node, parent_node)
-    if current_node.left_child.nil? && current_node.right_child.nil?
+    if current_node.left_child.value.nil? && current_node.right_child.value.nil?
       delete_leaf(current_node, parent_node)
-    elsif current_node.left_child && current_node.right_child
-      delete_double_child(current_node, parent_node)
+    elsif current_node.left_child.value && current_node.right_child.value
+      # current_node.value should be successor_array[0].value
+      # successor_array[1].left_child = successor_array[0].right_child
+      delete_double_child(current_node)
     else
       delete_single_child(current_node)
     end
@@ -83,8 +85,16 @@ class Tree
     parent_node.right_child = nil if parent_node.value < current_node.value
   end
 
-  def delete_double_child(current_node, parent_node)
+  def find_successor(current_node, parent_node = nil)
+    return [current_node, parent_node] if current_node.left_child.nil?
 
+    find_successor(current_node.left_child, current_node)
+  end
+
+  def delete_double_child(current_node)
+    successor_array = find_successor(current_node.right_child)
+    current_node.value = successor_array[0].value
+    successor_array[1].left_child = nil
   end
 
   def delete_single_child(current_node)
@@ -95,6 +105,7 @@ class Tree
       current_node.value = current_node.right_child.value
       current_node.right_child = nil
     end
+    current_node
   end
 
   def find(value)
@@ -113,10 +124,9 @@ class Tree
   end
 end
 
-tree = Tree.new([3, 6])
-# [0, 1, 3, 4, 5, 9]
-tree.insert(2)
-tree.insert(1)
+tree = Tree.new([20, 30, 50, 40, 32, 34, 36, 70, 60, 65, 80, 75, 85])
+# [1, 2, 3, 4, 5, 6, 9, 12, 13]
 tree.pretty_print
-tree.delete(2)
+tree.delete(75)
 tree.pretty_print
+# tree.pretty_print
