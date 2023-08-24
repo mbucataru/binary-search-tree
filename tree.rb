@@ -80,6 +80,7 @@ class Tree
   end
 
   def delete_zero_child(current_node, parent_node)
+    @root = nil if parent_node.nil?
     parent_node.left_child = nil if parent_node.value > current_node.value
     parent_node.right_child = nil if parent_node.value < current_node.value
   end
@@ -93,8 +94,9 @@ class Tree
 
   def delete_double_child(current_node)
     successor_array = find_successor(current_node.right_child)
-    current_node.value = successor_array[0].value
-    successor_array[1].left_child = nil
+    successor, parent_of_successor = successor_array
+    current_node.value = successor.value
+    parent_of_successor.left_child = successor.right_child
   end
 
   def delete_single_child(current_node)
@@ -122,10 +124,42 @@ class Tree
     end
     current_node
   end
+
+  def level_order(&block)
+    return nil if root.nil?
+
+    queue = [root]
+
+    if block
+      apply_block(queue, block)
+    else
+      return_all_values_in_tree(queue)
+    end
+
+  end
+
+  def apply_block(queue, block)
+    until queue.empty?
+      node = queue.shift
+      block.call(node)
+      queue.push(node.left_child) if node.left_child
+      queue.push(node.right_child) if node.right_child
+    end
+  end
+
+  def return_all_values_in_tree(queue)
+    return_array = []
+    until queue.empty?
+      node = queue.shift
+      return_array << node.value
+      queue.push(node.left_child) if node.left_child
+      queue.push(node.right_child) if node.right_child
+    end
+    return_array
+  end
 end
 
 tree = Tree.new([20, 30, 50, 40, 32, 34, 36, 70, 60, 65, 80, 75, 85])
 # [1, 2, 3, 4, 5, 6, 9, 12, 13]
 tree.pretty_print
-tree.delete(50)
-tree.pretty_print
+p tree.level_order
