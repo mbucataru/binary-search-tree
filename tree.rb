@@ -7,7 +7,8 @@ class Tree
   end
 
   def build_tree(array)
-    return Node.new(array[0]) if array.length <= 1
+    return nil if array.empty?
+    return Node.new(array[0]) if array.length == 1
 
     array.uniq!
     array.sort!
@@ -69,22 +70,21 @@ class Tree
   end
 
   def delete_node(current_node, parent_node)
-    if current_node.left_child.value.nil? && current_node.right_child.value.nil?
-      delete_leaf(current_node, parent_node)
-    elsif current_node.left_child.value && current_node.right_child.value
-      # current_node.value should be successor_array[0].value
-      # successor_array[1].left_child = successor_array[0].right_child
+    if current_node.left_child.nil? && current_node.right_child.nil?
+      delete_zero_child(current_node, parent_node)
+    elsif current_node.left_child && current_node.right_child
       delete_double_child(current_node)
     else
       delete_single_child(current_node)
     end
   end
 
-  def delete_leaf(current_node, parent_node)
+  def delete_zero_child(current_node, parent_node)
     parent_node.left_child = nil if parent_node.value > current_node.value
     parent_node.right_child = nil if parent_node.value < current_node.value
   end
 
+  # Returns [successor, parent_of_successor]
   def find_successor(current_node, parent_node = nil)
     return [current_node, parent_node] if current_node.left_child.nil?
 
@@ -127,6 +127,5 @@ end
 tree = Tree.new([20, 30, 50, 40, 32, 34, 36, 70, 60, 65, 80, 75, 85])
 # [1, 2, 3, 4, 5, 6, 9, 12, 13]
 tree.pretty_print
-tree.delete(75)
+tree.delete(50)
 tree.pretty_print
-# tree.pretty_print
