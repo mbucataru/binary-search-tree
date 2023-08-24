@@ -43,6 +43,48 @@ class Tree
     end
   end
 
+  # Scenario one: No children:
+  #   Simply set deletion node to nil
+  # Scenario two: One Child:
+  #   Copy the value of the child to the deletion node
+  #   Set old child to null and blank out its parent's child
+  # Scenario three: Two children:
+  #   Find its order successor
+  #   Copy the value of the order successor to the deletion node
+  #   Set the old child to null and blank out its parent's child
+  def delete(deletion_value, current_node = @root, parent_node = nil)
+    return current_node if current_node.nil?
+
+    # Recursive calls to go deeper in the tree
+    if current_node.value > deletion_value
+      current_node.left_child = delete(deletion_value, current_node.left_child, current_node)
+      return current_node
+    elsif current_node.value < deletion_value
+      current_node.right_child = delete(deletion_value, current_node.right_child, current_node)
+      return current_node
+    end
+    # We exit the if else statement when we hit the value
+
+    # If the deletion node has no children
+    if current_node.left_child.nil? && current_node.right_child.nil?
+      parent_node.left_child = nil if parent_node.value > current_node.value
+      parent_node.right_child = nil if parent_node.value < current_node.value
+      # If deletion node has two children
+    elsif current_node.left_child && current_node.right_child
+
+      # If deletion node has one child
+    else
+      if current_node.left_child
+        current_node.value = current_node.left_child.value
+        current_node.left_child = nil
+      else
+        current_node.value = current_node.right_child.value
+        current_node.right_child = nil
+      end
+    end
+    current_node
+  end
+
   def find(value)
     current_node = root
     loop do
@@ -61,7 +103,8 @@ end
 
 tree = Tree.new([3, 6])
 # [0, 1, 3, 4, 5, 9]
-tree.pretty_print
 tree.insert(2)
 tree.insert(1)
+tree.pretty_print
+tree.delete(2)
 tree.pretty_print
