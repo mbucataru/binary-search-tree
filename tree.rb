@@ -72,8 +72,8 @@ class Tree
   def find(value)
     current_node = root
     loop do
-      return current_node if current_node.value == value
       return nil if current_node.nil?
+      return current_node if current_node.value == value
 
       current_node = if value > current_node.value
                        current_node.right_child
