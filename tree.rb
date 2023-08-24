@@ -63,26 +63,38 @@ class Tree
       current_node.right_child = delete(deletion_value, current_node.right_child, current_node)
       return current_node
     end
+
+    delete_node(current_node, parent_node)
     # We exit the if else statement when we hit the value
+  end
 
-    # If the deletion node has no children
+  def delete_node(current_node, parent_node)
     if current_node.left_child.nil? && current_node.right_child.nil?
-      parent_node.left_child = nil if parent_node.value > current_node.value
-      parent_node.right_child = nil if parent_node.value < current_node.value
-      # If deletion node has two children
+      delete_leaf(current_node, parent_node)
     elsif current_node.left_child && current_node.right_child
-
-      # If deletion node has one child
+      delete_double_child(current_node, parent_node)
     else
-      if current_node.left_child
-        current_node.value = current_node.left_child.value
-        current_node.left_child = nil
-      else
-        current_node.value = current_node.right_child.value
-        current_node.right_child = nil
-      end
+      delete_single_child(current_node)
     end
-    current_node
+  end
+
+  def delete_leaf(current_node, parent_node)
+    parent_node.left_child = nil if parent_node.value > current_node.value
+    parent_node.right_child = nil if parent_node.value < current_node.value
+  end
+
+  def delete_double_child(current_node, parent_node)
+
+  end
+
+  def delete_single_child(current_node)
+    if current_node.left_child
+      current_node.value = current_node.left_child.value
+      current_node.left_child = nil
+    else
+      current_node.value = current_node.right_child.value
+      current_node.right_child = nil
+    end
   end
 
   def find(value)
