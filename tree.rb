@@ -97,6 +97,30 @@ class Tree
 
   end
 
+  def inorder(node = root, &block)
+    return if node.nil?
+
+    inorder(node.left, &block)
+    block.call(node)
+    inorder(node.right, &block)
+  end
+
+  def preorder(node = root, &block)
+    return if node.nil?
+
+    block.call(node)
+    preorder(node.left, &block)
+    preorder(node.right, &block)
+  end
+
+  def postorder(node = root, &block)
+    return if node.nil?
+
+    postorder(node.left, &block)
+    postorder(node.right, &block)
+    block.call(node)
+  end
+
   private
 
   def delete_node(current_node, parent_node)
@@ -162,6 +186,3 @@ class Tree
 end
 
 tree = Tree.new([20, 30, 50, 40, 32, 34, 36, 70, 60, 65, 80, 75, 85])
-# [1, 2, 3, 4, 5, 6, 9, 12, 13]
-tree.pretty_print
-p tree.level_order
