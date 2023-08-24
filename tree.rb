@@ -6,21 +6,6 @@ class Tree
     @root = build_tree(array)
   end
 
-  def build_tree(array)
-    return nil if array.empty?
-    return Node.new(array[0]) if array.length == 1
-
-    array.uniq!
-    array.sort!
-    midpoint = array.length / 2
-    root = Node.new(array[midpoint])
-    # Build left side of tree
-    root.left_child = build_tree(array[0...midpoint])
-    # Build right side of tree
-    root.right_child = build_tree(array[midpoint + 1...array.length])
-    root
-  end
-
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right_child, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right_child
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
@@ -158,7 +143,28 @@ class Tree
     balanced?(node.left_child) && balanced?(node.right_child)
   end
 
+  def rebalance
+    array_of_node_values = []
+    inorder { |node| array_of_node_values << node.value }
+    @root = build_tree(array_of_node_values)
+  end
+
   private
+
+  def build_tree(array)
+    return nil if array.empty?
+    return Node.new(array[0]) if array.length == 1
+
+    array.uniq!
+    array.sort!
+    midpoint = array.length / 2
+    root = Node.new(array[midpoint])
+    # Build left side of tree
+    root.left_child = build_tree(array[0...midpoint])
+    # Build right side of tree
+    root.right_child = build_tree(array[midpoint + 1...array.length])
+    root
+  end
 
   def delete_node(current_node, parent_node)
     if current_node.left_child.nil? && current_node.right_child.nil?
