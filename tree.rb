@@ -69,6 +69,36 @@ class Tree
     delete_node(current_node, parent_node)
   end
 
+  def find(value)
+    current_node = root
+    loop do
+      return current_node if current_node.value == value
+      return nil if current_node.nil?
+
+      current_node = if value > current_node.value
+                       current_node.right_child
+                     else
+                       current_node.left_child
+                     end
+    end
+    current_node
+  end
+
+  def level_order(&block)
+    return nil if root.nil?
+
+    queue = [root]
+
+    if block
+      apply_block(queue, block)
+    else
+      return_all_values_in_tree(queue)
+    end
+
+  end
+
+  private
+
   def delete_node(current_node, parent_node)
     if current_node.left_child.nil? && current_node.right_child.nil?
       delete_zero_child(current_node, parent_node)
@@ -108,34 +138,6 @@ class Tree
       current_node.right_child = nil
     end
     current_node
-  end
-
-  def find(value)
-    current_node = root
-    loop do
-      return current_node if current_node.value == value
-      return nil if current_node.nil?
-
-      current_node = if value > current_node.value
-                       current_node.right_child
-                     else
-                       current_node.left_child
-                     end
-    end
-    current_node
-  end
-
-  def level_order(&block)
-    return nil if root.nil?
-
-    queue = [root]
-
-    if block
-      apply_block(queue, block)
-    else
-      return_all_values_in_tree(queue)
-    end
-
   end
 
   def apply_block(queue, block)
