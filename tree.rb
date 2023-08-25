@@ -69,41 +69,61 @@ class Tree
     current_node
   end
 
-  def level_order(&block)
+  def level_order
     return nil if root.nil?
 
     queue = [root]
 
-    if block
-      apply_block(queue, block)
+    if block_given?
+      apply_block(queue)
     else
       return_all_values_in_tree(queue)
     end
 
   end
 
-  def inorder(node = root, &block)
-    return if node.nil?
+  def inorder(node = root, arr = [], &block)
+    return arr if node.nil?
 
-    inorder(node.left, &block)
-    block.call(node)
-    inorder(node.right, &block)
+    inorder(node.left_child, arr, &block)
+
+    if block_given?
+      block.call(node)
+    else
+      arr << node.value
+    end
+
+    inorder(node.right_child, arr, &block)
+
+    arr
   end
 
-  def preorder(node = root, &block)
-    return if node.nil?
+  def preorder(node = root, arr = [], &block)
+    return arr if node.nil?
 
-    block.call(node)
-    preorder(node.left, &block)
-    preorder(node.right, &block)
+    if block_given?
+      block.call(node)
+    else
+      arr << node.value
+    end
+
+    preorder(node.left_child, arr, &block)
+    preorder(node.right_child, arr, &block)
+
+
   end
 
-  def postorder(node = root, &block)
-    return if node.nil?
+  def postorder(node = root, arr = [], &block)
+    return arr if node.nil?
 
-    postorder(node.left, &block)
-    postorder(node.right, &block)
-    block.call(node)
+    postorder(node.left_child, arr, &block)
+    postorder(node.right_child, arr, &block)
+
+    if block_given?
+      block.call(node)
+    else
+      arr << node.value
+    end
   end
 
   def height(node)
@@ -144,8 +164,7 @@ class Tree
   end
 
   def rebalance
-    array_of_node_values = []
-    inorder { |node| array_of_node_values << node.value }
+    array_of_node_values = inorder
     @root = build_tree(array_of_node_values)
   end
 
@@ -207,10 +226,10 @@ class Tree
     current_node
   end
 
-  def apply_block(queue, block)
+  def apply_block(queue)
     until queue.empty?
       node = queue.shift
-      block.call(node)
+      yield(node)
       queue.push(node.left_child) if node.left_child
       queue.push(node.right_child) if node.right_child
     end
@@ -227,7 +246,3 @@ class Tree
     return_array
   end
 end
-
-tree = Tree.new([20, 30, 50, 40, 32, 34, 36, 70, 60, 65, 80, 75, 85])
-tree.pretty_print
-puts tree.balanced?
