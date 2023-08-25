@@ -2,6 +2,7 @@ require_relative 'tree'
 
 tree = Tree.new((Array.new(15) { rand(1..100) }))
 p tree.balanced?
+p tree.level_order
 p tree.inorder
 p tree.preorder
 p tree.postorder
@@ -10,5 +11,8 @@ p tree.postorder
 end
 p tree.balanced?
 tree.rebalance
-p tree.inorder
 p tree.balanced?
+p tree.level_order
+p tree.inorder
+p tree.preorder
+p tree.postorder
