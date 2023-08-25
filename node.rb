@@ -8,8 +8,4 @@ class Node
     @left_child = nil
     @right_child = nil
   end
-
-  def <=>(node)
-    value <=> node.value
-  end
 end
