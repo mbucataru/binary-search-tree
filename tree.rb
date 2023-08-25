@@ -51,7 +51,13 @@ class Tree
     end
 
     # This line is reached when we hit the node we want to delete
-    delete_node(current_node, parent_node)
+    if current_node.left_child.nil? && current_node.right_child.nil?
+      delete_zero_child(current_node, parent_node)
+    elsif current_node.left_child && current_node.right_child
+      delete_double_child(current_node)
+    else
+      delete_single_child(current_node)
+    end
   end
 
   def find(value)
@@ -183,16 +189,6 @@ class Tree
     # Build right side of tree
     root.right_child = build_tree(array[midpoint + 1...array.length])
     root
-  end
-
-  def delete_node(current_node, parent_node)
-    if current_node.left_child.nil? && current_node.right_child.nil?
-      delete_zero_child(current_node, parent_node)
-    elsif current_node.left_child && current_node.right_child
-      delete_double_child(current_node)
-    else
-      delete_single_child(current_node)
-    end
   end
 
   def delete_zero_child(current_node, parent_node)
